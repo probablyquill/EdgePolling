@@ -1,0 +1,18 @@
+{
+    "edge_em":"thisis@myedgelogin.com",
+    "edge_key":"edgePasswordGoesHere",
+    "edge_url":"https://my-edge-installtion.net",
+
+    "sql_db":"monitoring",
+    "sql_user":"edgepolling",
+    "sql_pw":"12345",
+    "sql_ip":"127.0.0.1",
+
+    "email_sender":"smtp-username",
+    "email_key":"api key goes here",
+    "smtp_url":"smtp.server.com",
+    "smtp_port":587,
+    
+    "flask_ip":"127.0.0.1",
+    "flask_port":5000
+}

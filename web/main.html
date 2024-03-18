@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Edge Monitoring</title>
+        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='main.css') }}">
+        <script src="{{url_for('static', filename='main.js')}}"></script>
+    </head>
+
+    <body>
+        <div class="content-display">
+            <table id="data-table"></table>
+        </div>
+        <br>
+        <div class="email-display">
+            <table id="email-table"></table>
+        </div>
+        <br>
+        <table>
+            <tr>
+                <th>
+                    <label>Name:</label>
+                    <input type="text" name="name" id="name-input">
+                </th>
+                <th>
+                    <label>EdgeID:</label>
+                    <input type="text" name="edgeID" id="edge-id-input">
+                </th>
+            </tr>
+            <tr>
+                <th><button onclick="deleteBlacklist()">Delete From Blacklist</button></th>
+                <th><button onclick="addBlacklist()">Add to Blacklist</button></th>
+            </tr>
+        </table>
+        <br>
+        <table>
+            <tr>
+                <th>
+                    <label>Email:</label>
+                    <input type="text" name="name" id="email-address">
+                </th>
+            </tr>
+            <tr>
+                <th><button onclick="addEmail()">Add Email</button></th>
+                <th><button onclick="deleteEmail()">Remove Email</button></th>
+            </tr>
+        </table>
+
+    </body>
+    
+    <script>
+    getData();
+    setInterval(function(){getData()}, 10000);
+    </script>
+</html> 

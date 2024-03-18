@@ -1,0 +1,24 @@
+th, td {
+    padding-right: 30px;
+    font-weight: bold;
+  }
+  
+  .divider {
+    border-style: inset !important;
+    background-color: #D6EEEE;
+  }
+  .element {
+    border-style: dashed;
+    border-top: none;
+    border-bottom: none;
+  }
+
+  .inner {
+    border-bottom: dashed;
+  }
+  
+  table {
+    text-align: left;
+    border-spacing: auto;
+    border-collapse: collapse;
+  }
