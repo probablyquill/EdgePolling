@@ -1,4 +1,4 @@
-# NetInsightEdge
+# Edge Monitoring
 
 This is a tool for monitoring a NetInsight Edge installtion via their provided API. This system includes email alerts,
 as well as maintaining an SQL database for other systems such as Grafana to monitor. 
@@ -11,7 +11,7 @@ Use the package manager to install all python dependencies.
 pip3 install -r requirements.txt -y
 ```
 
-This system also requires a MySQL installation, with a created database. User permissions can be configured as needed.
+This system also requires a MySQL installation, with an existing database. User permissions can be configured as needed.
 
 The config_example.json file has an example configuration file which must be updated to suit your installation.
 
@@ -19,7 +19,7 @@ The config_example.json file has an example configuration file which must be upd
 
 Configure the config_examples.json file to have all necessary information and API keys, then rename it to config.json.
 
-```python
+```bash
 python3 run.py
 ```
 

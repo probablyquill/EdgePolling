@@ -1,7 +1,5 @@
-  
-  .divider {
-    border-style: inset !important;
-    background-color: #D6EEEE;
+  body {
+    background-color: #C2C8D0;
   }
   .element {
     border-style: dashed;

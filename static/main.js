@@ -1,3 +1,4 @@
+//Retrieve data from server via /get_data GET request.
 function getData() {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -10,66 +11,27 @@ function getData() {
     xhttp.send();
 }
 
-//I will need to look later, but addToBlacklist, addToEmail, and removeEmail can probably all be
-//consolidated into one function.
-function addToBlacklist(name, edgeId) {
+//Sends a POST request formated as "request_type": data.
+function sendUpdateRequest(request_type, data) {
     var xhttp = new XMLHttpRequest();
+    
+    //You cannot directly feed stringify a string object to use as the key, so you have 
+    //to create an object with a key-value pair and then give it to jsonify.
+    var containerObj = {}
+    containerObj[request_type] = data;
+    dataToSend = JSON.stringify(containerObj);
 
-    var dataToSend = JSON.stringify({"add_to_blacklist":[name, edgeId, "blacklisted"]})
+    //"delete_from_blacklist": "edgeID"
+    //"add_to_blacklist": ["name", "edgeID", "any string"]
+    //"add_email":"email"
+    //"delete_email":"email"
 
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
+            //Runs getData to update tables after the post request has been processed.
             getData();
         }
     }
-
-    xhttp.open("POST", "send_data", true);
-    xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.send(dataToSend);
-}
-
-function addToEmail(address) {
-    var xhttp = new XMLHttpRequest();
-
-    var dataToSend = JSON.stringify({"add_email":address})
-
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            getData();
-        }
-    }
-
-    xhttp.open("POST", "send_data", true);
-    xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.send(dataToSend);
-}
-
-function delete_email(address) {
-    var xhttp = new XMLHttpRequest();
-
-    var dataToSend = JSON.stringify({"delete_email":address})
-
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            getData();
-        }
-    }
-
-    xhttp.open("POST", "send_data", true);
-    xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.send(dataToSend);
-}
-
-function removeFromBlacklist(edgeId) {
-    var xhttp = new XMLHttpRequest();
-
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            getData();
-        }
-    }
-
-    var dataToSend = JSON.stringify({"remove_from_blacklist":edgeId})
 
     xhttp.open("POST", "send_data", true);
     xhttp.setRequestHeader("Content-type", "application/json");
@@ -80,7 +42,7 @@ function removeFromBlacklist(edgeId) {
 function createTable(offline, errors, blacklist, emails) {
 
     var body = document.getElementById("data-table");
-    var headerList = ["Offline:", "Errors:", "Blacklist"];
+    var headerList = ["Offline:", "Errors:", "Blacklist:"];
     var itemList = [offline, errors, blacklist];
 
     while (body.hasChildNodes()) body.firstChild.remove();
@@ -105,7 +67,7 @@ function createTable(offline, errors, blacklist, emails) {
 
         var tableBody = document.createElement("tbody");
         
-        //Loops through provides array of arrays and populates the table accordingly.
+        //Loops through provided array of arrays and populates the table accordingly.
         for (var i = 0; i < itemList[l].length; i++) {
             var newLine = document.createElement("tr");
             var newCell = document.createElement("td");
@@ -176,6 +138,7 @@ function deleteBlacklist() {
     
     if (edgeID.value != "" && edgeID.value != null) {
         removeFromBlacklist(edgeID.value);
+        sendUpdateRequest("remove_from_blacklist", edgeID.value);
 
         edgeID.value = "";
     }
@@ -187,7 +150,7 @@ function addBlacklist() {
 
     if (edgeID.value != "" && edgeID.value != null) {
         if (edgeName.value != "" && edgeName.value != null) {
-            addToBlacklist(edgeName.value, edgeID.value);
+            sendUpdateRequest("add_to_blacklist", [edgeName.value, edgeID.value, "blacklist"]);
         
             edgeID.value = "";
             edgeName.value = "";
@@ -199,7 +162,7 @@ function addEmail() {
     var addressElement = document.getElementById("email-address");
 
     if (addressElement.value != "" && addressElement.value != null) {
-        addToEmail(addressElement.value)
+        sendUpdateRequest("add_email", addressElement.value);
         addressElement.value = "";
     }
 }
@@ -208,7 +171,7 @@ function deleteEmail() {
     var addressElement = document.getElementById("email-address");
 
     if (addressElement.value != "" && addressElement.value != null) {
-        delete_email(addressElement.value)
+        sendUpdateRequest("delete_email", addressElement.value);
         addressElement.value = "";
     }
 }

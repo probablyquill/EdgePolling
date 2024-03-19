@@ -11,6 +11,7 @@ class DataHandler():
         self.sql_cnx = None
         self.sql_cur = None
 
+    #Creates all needed table if they don't already exist and establishes the sql connection and cursor.
     def connect_to_database(self):
         self.sql_cnx = mysql.connector.connect(user=self.user, password=self.password, host=self.location, database=self.database)
         self.sql_cur = self.sql_cnx.cursor()
@@ -21,15 +22,10 @@ class DataHandler():
         self.sql_cur.execute("CREATE TABLE IF NOT EXISTS blacklist(edgeID TEXT, name TEXT, type TEXT);")
         self.sql_cur.execute("CREATE TABLE IF NOT EXISTS emails(address TEXT);")
 
+    #Closes the sql connection by clearing both the connection and the cursor.
     def close_connection(self):
         if self.sql_cur != None: self.sql_cnx.close()
         if self.sql_cnx != None: self.sql_cnx.close()
-
-    def commit_and_close(self):
-        if self.sql_cur != None: self.sql_cnx.close()
-        if self.sql_cnx != None: 
-            self.sql_cnx.commit()
-            self.sql_cnx.close()
 
     def get_offline(self):
         self.sql_cur.execute("SELECT name, edgeID FROM offline;")
@@ -49,6 +45,7 @@ class DataHandler():
         
         return error_list
 
+    #These can both be combined into the same item, if the logic in PollingAgent is adjusted.
     def get_blacklist_web(self):
         self.sql_cur.execute("SELECT name, edgeID from blacklist;")
         blacklist = self.sql_cur.fetchall()
@@ -71,6 +68,7 @@ class DataHandler():
         self.sql_cur.execute("INSERT IGNORE INTO blacklist(edgeID, name, type) VALUES (%s, %s, %s)", (str(edgeID), str(name), str(type)))
         self.sql_cnx.commit()
 
+    #Offline is a list of the dicts pulled from the api. 
     def update_offline(self, offline):
         self.sql_cur.execute("TRUNCATE TABLE offline;")
 
@@ -79,6 +77,7 @@ class DataHandler():
         
         self.sql_cnx.commit()
 
+    #io_list is a list of the dicts made from the API.
     def update_fields(self, io_list):
         self.sql_cur.execute("TRUNCATE TABLE fields;")
 
@@ -87,6 +86,7 @@ class DataHandler():
         
         self.sql_cnx.commit()
 
+    #error_list is a list of the dicts made from the API.
     def update_errors(self, error_list):
         self.sql_cur.execute("TRUNCATE TABLE errors;")
 
@@ -95,6 +95,7 @@ class DataHandler():
         
         self.sql_cnx.commit()
 
+    #edgeID is a string of the edge id.
     def remove_from_blacklist(self, edgeID):
         self.sql_cur.execute("DELETE FROM blacklist WHERE edgeID = %s;", (edgeID,))
         self.sql_cnx.commit()
@@ -116,6 +117,7 @@ class DataHandler():
 
         for item in templist:
             #Done this way in order to clear the tuple so that it's just a list of strings.
+            #Data is returned from the cursor as (email,).
             emails.append(item[0])
         
         return emails

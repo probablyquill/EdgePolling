@@ -10,7 +10,6 @@ def start_agent():
     agent = PollingAgent()
 
     while True:
-        print("Running polling")
         agent.poll_apis()
         agent.alert_manager()
         time.sleep(10)
@@ -46,6 +45,12 @@ def run_flask():
         emails = data_handler.get_emails()
         data_handler.close_connection()
 
+        #Use append versus using '= ["None,"]' as the later messes up the object.
+        templist = [errors, offline, blacklist, emails]
+        for item in templist:
+            if (len(item) == 0): item.append("None")
+
+        #Create data object which will be sent to the server.
         data = {
             "errors":errors,
             "offline":offline,
@@ -58,7 +63,6 @@ def run_flask():
     #Completely untested lmao
     @app.route("/send_data", methods = ['POST'])
     def send_data():
-        print("Recieved Data")
         if request.method == "POST":
             incoming_data = request.get_json()
             print(incoming_data)
@@ -74,21 +78,16 @@ def run_flask():
                 item = incoming_data["add_to_blacklist"]
                 data_handler.update_blacklist(item[0], item[1], item[2])
 
+            #Formatted as string(email)
             if ("add_email" in incoming_data.keys()):
                 data_handler.add_email(incoming_data["add_email"])
 
+            #Formatted as string(email)
             if ("delete_email" in incoming_data.keys()):
                 data_handler.remove_email(incoming_data["delete_email"])
             
             data_handler.close_connection()
 
-            resp = jsonify(success=True)
-            return resp
-    
-    @app.route("/add_contact", methods = ["POST"])
-    def add_contact():
-        if request.method == "POST":
-            
             resp = jsonify(success=True)
             return resp
 
@@ -99,6 +98,8 @@ def run_flask():
 if __name__ == "__main__":
     multiprocessing.set_start_method("spawn")
     p = multiprocessing.Process(target=start_agent)
+    
+    #IF THIS IS COMMENTED OUT THEN THE EDGE POLLING AND ALARMING WILL NOT HAPPEN
     #p.start()
 
     run_flask()
