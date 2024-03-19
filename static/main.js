@@ -92,6 +92,7 @@ function createTable(offline, errors, blacklist, emails) {
         var labelOneText = document.createTextNode(headerList[l]);
         var labelTwo = document.createElement("th");
         var labelTwoText = document.createTextNode("Edge ID:");
+        var tableHeader = document.createElement("thead");
 
         labelOne.appendChild(labelOneText);
         newRow.appendChild(labelOne);
@@ -99,8 +100,11 @@ function createTable(offline, errors, blacklist, emails) {
         labelTwo.appendChild(labelTwoText);
         newRow.appendChild(labelTwo);
 
-        body.appendChild(newRow);
+        tableHeader.appendChild(newRow);
+        body.appendChild(tableHeader);
 
+        var tableBody = document.createElement("tbody");
+        
         //Loops through provides array of arrays and populates the table accordingly.
         for (var i = 0; i < itemList[l].length; i++) {
             var newLine = document.createElement("tr");
@@ -123,8 +127,10 @@ function createTable(offline, errors, blacklist, emails) {
                 newLine.classList.add('inner');
             }
 
-            body.appendChild(newLine);
+            tableBody.appendChild(newLine);
         }
+
+        body.appendChild(tableBody);
     }
 
     //One last time for the email list
@@ -137,11 +143,15 @@ function createTable(offline, errors, blacklist, emails) {
     newRow.classList.add('divider');
     var labelOne = document.createElement("th");
     var labelOneText = document.createTextNode("Emails:");
+    var tableHeader = document.createElement("thead");    
 
     labelOne.appendChild(labelOneText);
     newRow.appendChild(labelOne);
 
-    body.appendChild(newRow);
+    tableHeader.appendChild(newRow);
+    body.appendChild(tableHeader);
+
+    var tableBody = document.createElement("tbody");
 
     for (var i = 0; i < emails.length; i++) {
         var newLine = document.createElement("tr");
@@ -154,8 +164,10 @@ function createTable(offline, errors, blacklist, emails) {
         newLine.classList.add('element');
         newLine.classList.add('inner');
 
-        body.appendChild(newLine);
+        tableBody.appendChild(newLine);
     }
+
+    body.appendChild(tableBody);
 
 }
 

@@ -9,25 +9,28 @@
 
     <body>
         <div class="container">
-            <div class="content-display">
+            <div class="content-display m-5">
                 <div class="row">
-                    <div class="col-8"><table id="data-table" class="table"></table></div>
-                    <div class="col-4">
-                        <div class="row"><label>Name:</label></div>
-                        <div class="row">
-                            <div class="col"><input type="text" name="name" id="name-input"></div>
-                            <div class="col"><button onclick="deleteBlacklist()">Delete From Blacklist</button></div>
-                        </div>
-                        <div class="row"><label>EdgeID:</label></div>
-                        <div class="row">
-                            <div class="col"><input type="text" name="edgeID" id="edge-id-input"></div>
-                            <div class="col"><button onclick="addBlacklist()">Add to Blacklist</button></div>
+                    <div class="col-9"><table id="data-table" class="table table-striped"></table></div>
+                    <div class="col-3">
+                        <div class="col-8 offset-2">
+                            <div class="row"><label class="d-flex justify-content-center">Name:</label></div>
+                            <div class="row d-flex justify-content-center"><input type="text" name="name" id="name-input"></div>
+                            <div class="row d-flex justify-content-center"><label class="d-flex justify-content-center">EdgeID:</label></div>
+                            <div class="row d-flex justify-content-center"><input type="text" name="edgeID" id="edge-id-input"></div>
+
+                            <div class="row d-flex justify-content-center">
+                                <div class="btn-group-vertical">
+                                    <button onclick="addBlacklist()" class="btn btn-success btn-block mt-1">Add to Blacklist</button>
+                                    <button onclick="deleteBlacklist()" class="btn btn-danger btn-block mt-1">Delete From Blacklist</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-8"><div class="email-display"><table id="email-table" class="table"></table></div></div>
-                    <div class="col-4">
+                    <div class="col-9"><div class="email-display"><table id="email-table" class="table table-striped"></table></div></div>
+                    <div class="col-3">
                         <div class="row"><div class="col"><label>Email:</label></div></div>
                         <div class="row"><div class="col"><input type="text" name="name" id="email-address"></div></div>
                         <div class="row">
