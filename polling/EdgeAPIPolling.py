@@ -111,7 +111,7 @@ class EdgeAPIPolling():
             #parse for errors
             for item in self.io_list:
                 #allOk is the default "good" status response. Anything else has some form of alarm or error.
-                if ("alarm" in str(item['status']).lower() and item['id'] not in self.blacklist):
+                if ("alarm" in str(item['status']).lower() and (item['id'] not in self.blacklist)):
                     self.error_list.append(item)
 
             return (self.offline_list, self.io_list, self.error_list)

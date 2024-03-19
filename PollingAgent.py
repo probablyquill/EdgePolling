@@ -3,6 +3,7 @@ from DataHandler import DataHandler
 from polling.AlertManager import AlertManager
 import polling.MailHandler as MailHandler
 import json
+import time
 
 class PollingAgent():
     def __init__(self):
@@ -62,5 +63,7 @@ class PollingAgent():
 if __name__ == "__main__":
     print("Running")
     agent = PollingAgent()
-    agent.poll_apis()
-    agent.alert_manager()
+    while True:
+        agent.poll_apis()
+        agent.alert_manager()
+        time.sleep(10)

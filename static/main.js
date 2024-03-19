@@ -38,6 +38,49 @@ function sendUpdateRequest(request_type, data) {
     xhttp.send(dataToSend);
 }
 
+function deleteBlacklist() {
+    var edgeID = document.getElementById("edge-id-input");
+    
+    if (edgeID.value != "" && edgeID.value != null) {
+        removeFromBlacklist(edgeID.value);
+        sendUpdateRequest("remove_from_blacklist", edgeID.value);
+
+        edgeID.value = "";
+    }
+}
+
+function addBlacklist() {
+    var edgeID = document.getElementById("edge-id-input");
+    var edgeName = document.getElementById("name-input");
+
+    if (edgeID.value != "" && edgeID.value != null) {
+        if (edgeName.value != "" && edgeName.value != null) {
+            sendUpdateRequest("add_to_blacklist", [edgeName.value, edgeID.value, "blacklist"]);
+        
+            edgeID.value = "";
+            edgeName.value = "";
+        }
+    }
+}
+
+function addEmail() {
+    var addressElement = document.getElementById("email-address");
+
+    if (addressElement.value != "" && addressElement.value != null) {
+        sendUpdateRequest("add_email", addressElement.value);
+        addressElement.value = "";
+    }
+}
+
+function deleteEmail() {
+    var addressElement = document.getElementById("email-address");
+
+    if (addressElement.value != "" && addressElement.value != null) {
+        sendUpdateRequest("delete_email", addressElement.value);
+        addressElement.value = "";
+    }
+}
+
 //This is horrible and I hate it and I'm sorry I wrote it but it works
 function createTable(offline, errors, blacklist, emails) {
 
@@ -131,47 +174,4 @@ function createTable(offline, errors, blacklist, emails) {
 
     body.appendChild(tableBody);
 
-}
-
-function deleteBlacklist() {
-    var edgeID = document.getElementById("edge-id-input");
-    
-    if (edgeID.value != "" && edgeID.value != null) {
-        removeFromBlacklist(edgeID.value);
-        sendUpdateRequest("remove_from_blacklist", edgeID.value);
-
-        edgeID.value = "";
-    }
-}
-
-function addBlacklist() {
-    var edgeID = document.getElementById("edge-id-input");
-    var edgeName = document.getElementById("name-input");
-
-    if (edgeID.value != "" && edgeID.value != null) {
-        if (edgeName.value != "" && edgeName.value != null) {
-            sendUpdateRequest("add_to_blacklist", [edgeName.value, edgeID.value, "blacklist"]);
-        
-            edgeID.value = "";
-            edgeName.value = "";
-        }
-    }
-}
-
-function addEmail() {
-    var addressElement = document.getElementById("email-address");
-
-    if (addressElement.value != "" && addressElement.value != null) {
-        sendUpdateRequest("add_email", addressElement.value);
-        addressElement.value = "";
-    }
-}
-
-function deleteEmail() {
-    var addressElement = document.getElementById("email-address");
-
-    if (addressElement.value != "" && addressElement.value != null) {
-        sendUpdateRequest("delete_email", addressElement.value);
-        addressElement.value = "";
-    }
 }

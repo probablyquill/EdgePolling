@@ -46,9 +46,11 @@ def run_flask():
         data_handler.close_connection()
 
         #Use append versus using '= ["None,"]' as the later messes up the object.
-        templist = [errors, offline, blacklist, emails]
+        templist = [errors, offline, blacklist]
         for item in templist:
-            if (len(item) == 0): item.append("None")
+            if (len(item) == 0): item.append(["None", "None"])
+
+        if (len(emails) == 0): emails.append("None")
 
         #Create data object which will be sent to the server.
         data = {
@@ -100,6 +102,6 @@ if __name__ == "__main__":
     p = multiprocessing.Process(target=start_agent)
     
     #IF THIS IS COMMENTED OUT THEN THE EDGE POLLING AND ALARMING WILL NOT HAPPEN
-    #p.start()
+    p.start()
 
     run_flask()

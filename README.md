@@ -19,6 +19,14 @@ The config_example.json file has an example configuration file which must be upd
 
 Configure the config_examples.json file to have all necessary information and API keys, then rename it to config.json.
 
+To test the that the Polling can sucessfully reach the Edge installation and write to the SQL database, run the following command.
+
+```bash
+python3 PollingAgent.py
+```
+
+If the PollingAgent can run sucessfully, then you can launch the program using the following command.
+
 ```bash
 python3 run.py
 ```

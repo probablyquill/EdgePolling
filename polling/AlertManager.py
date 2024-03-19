@@ -4,12 +4,12 @@ class AlertManager():
         self.current_alarming = {}
 
     def parse_for_alarms(self, alarm_list):
+        body_text = ""
         for item in alarm_list:
-            body_text = ""
             #Unpacking the tupple into usable variables
             #This program operates under the assumption that the edgeID is the first
             #value stored in the database.
-            edgeid, *tmp = item
+            edgeid, *temp = item
             if (edgeid not in self.alarm_ids): self.alarm_ids.append(edgeid)
 
             if (edgeid in self.current_alarming):
@@ -21,8 +21,8 @@ class AlertManager():
                 #means that an alarm will be sent two minutes after the alarm is detected, and four minutes after
                 #the alarm is detected.
                 if ticks == 12 or ticks == 24:
-                    body_text = body_text + "\nOffline Device(s):\n" + str(alarm_list)
-                    return body_text
+                    if (body_text == ""): body_text = "Offline Device(s):"
+                    body_text = body_text + "\n" + str(item[1])
             
             else:
                 self.current_alarming[edgeid] = 0
