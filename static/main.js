@@ -127,16 +127,22 @@ function createTable(offline, errors, blacklist, emails) {
     
                 var newCell3 = document.createElement("td");
                 var newCellImage = document.createElement("img");
-    
-                newCellImage.src = "/static/plus.jpeg";
+                
                 newCellImage.classList.add('table-image');
                 newCellImage.onclick = function(){
                     sendUpdateRequest(headerCommands[currentL], [items[currentL][currentI][0], items[currentL][currentI][1], "button"]);
                 };
-    
+
                 newCell.appendChild(newCellText);
                 newCell2.appendChild(newCellText2);
-                newCell3.appendChild(newCellImage);
+
+                if (currentL != 2 && items[currentL][currentI][0] != "None") {
+                    newCellImage.src = "/static/plus.png";
+                    newCell3.appendChild(newCellImage);
+                } else if (items[currentL][currentI][0] != "None") {
+                    newCellImage.src = "/static/minus.png";
+                    newCell3.appendChild(newCellImage);
+                }
     
                 newLine.appendChild(newCell);
                 newLine.appendChild(newCell2);
