@@ -1,7 +1,7 @@
 {
     "edge_em":"thisis@myedgelogin.com",
     "edge_key":"edgePasswordGoesHere",
-    "edge_url":"https://my-edge-installtion.net/",
+    "edge_url":"https://my-edge-installation.net/",
 
     "sql_db":"monitoring",
     "sql_user":"edgepolling",

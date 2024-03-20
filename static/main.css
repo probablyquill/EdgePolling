@@ -16,3 +16,9 @@
     border-spacing: auto;
     border-collapse: collapse;
   }
+
+  .table-image {
+    display: block;
+    width: 2em;
+    height: 2em;
+  }

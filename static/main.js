@@ -118,19 +118,23 @@ function createTable(offline, errors, blacklist, emails) {
             var newCell2 = document.createElement("td");
             var newCellText2 = document.createTextNode(itemList[l][i][1]);
 
+            var newCell3 = document.createElement("td");
+            var newCellImage = document.createElement("img");
+
+            newCellImage.src = "/static/plus.jpeg";
+            newCellImage.classList.add('table-image');
+            newCellImage.onclick = function() {
+                sendUpdateRequest("add_to_blacklist", [itemList[l][i][0], itemList[l][i][1], "blacklist"]);
+            };
+
             newCell.appendChild(newCellText);
             newCell2.appendChild(newCellText2);
+            newCell3.appendChild(newCellImage);
 
             newLine.appendChild(newCell);
             newLine.appendChild(newCell2);
+            newLine.appendChild(newCell3);
             newLine.classList.add('element');
-            
-            //Some logic thrown in to make it look nice. Dashed line in between
-            //elements will only be put in on the non-last element unless it's 
-            //the last set of elements.
-            if (i != itemList[l].length - 1 || l == itemList.length - 1) {
-                newLine.classList.add('inner');
-            }
 
             tableBody.appendChild(newLine);
         }

@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, request, jsonify, make_response
 import multiprocessing
 from DataHandler import DataHandler
-from PollingAgent import PollingAgent
+from PollingAgent import PollingAgent, confirm_config
 import time
 import json
 
@@ -98,10 +98,11 @@ def run_flask():
 
 #Required for multiprocessing to start correctly.
 if __name__ == "__main__":
-    multiprocessing.set_start_method("spawn")
-    p = multiprocessing.Process(target=start_agent)
-    
-    #IF THIS IS COMMENTED OUT THEN THE EDGE POLLING AND ALARMING WILL NOT HAPPEN
-    p.start()
+    if (confirm_config()):
+        multiprocessing.set_start_method("spawn")
+        p = multiprocessing.Process(target=start_agent)
+        
+        #IF THIS IS COMMENTED OUT THEN THE EDGE POLLING AND ALARMING WILL NOT HAPPEN
+        p.start()
 
-    run_flask()
+        run_flask()
