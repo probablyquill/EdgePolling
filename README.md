@@ -1,6 +1,6 @@
 # Edge Monitoring
 
-This is a tool for monitoring a NetInsight Edge installtion via their provided API. This system includes email alerts,
+This is a tool for monitoring a NetInsight Edge installation via their provided API. This system includes email alerts,
 as well as maintaining an SQL database for other systems such as Grafana to monitor. 
 
 ## Installation
