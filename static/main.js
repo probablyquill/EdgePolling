@@ -86,6 +86,7 @@ function createTable(offline, errors, blacklist, emails) {
 
     var body = document.getElementById("data-table");
     var headerList = ["Offline:", "Errors:", "Blacklist:"];
+    var headerCommands = ["add_to_blacklist", "add_to_blacklist", "remove_from_blacklist"];
     var itemList = [offline, errors, blacklist];
 
     while (body.hasChildNodes()) body.firstChild.remove();
@@ -98,12 +99,15 @@ function createTable(offline, errors, blacklist, emails) {
         var labelTwo = document.createElement("th");
         var labelTwoText = document.createTextNode("Edge ID:");
         var tableHeader = document.createElement("thead");
+        var blankSpace = document.createElement("th") 
 
         labelOne.appendChild(labelOneText);
         newRow.appendChild(labelOne);
 
         labelTwo.appendChild(labelTwoText);
         newRow.appendChild(labelTwo);
+
+        newRow.appendChild(blankSpace)
 
         tableHeader.appendChild(newRow);
         body.appendChild(tableHeader);
@@ -112,31 +116,37 @@ function createTable(offline, errors, blacklist, emails) {
         
         //Loops through provided array of arrays and populates the table accordingly.
         for (var i = 0; i < itemList[l].length; i++) {
-            var newLine = document.createElement("tr");
-            var newCell = document.createElement("td");
-            var newCellText = document.createTextNode(itemList[l][i][0]);
-            var newCell2 = document.createElement("td");
-            var newCellText2 = document.createTextNode(itemList[l][i][1]);
 
-            var newCell3 = document.createElement("td");
-            var newCellImage = document.createElement("img");
-
-            newCellImage.src = "/static/plus.jpeg";
-            newCellImage.classList.add('table-image');
-            newCellImage.onclick = function() {
-                sendUpdateRequest("add_to_blacklist", [itemList[l][i][0], itemList[l][i][1], "blacklist"]);
-            };
-
-            newCell.appendChild(newCellText);
-            newCell2.appendChild(newCellText2);
-            newCell3.appendChild(newCellImage);
-
-            newLine.appendChild(newCell);
-            newLine.appendChild(newCell2);
-            newLine.appendChild(newCell3);
-            newLine.classList.add('element');
-
-            tableBody.appendChild(newLine);
+            //I'd like to thank ChatGPT for explaining IIFE in a way I could understand.
+            (function(items, currentI, currentL, headerCommands) {
+                var newLine = document.createElement("tr");
+                var newCell = document.createElement("td");
+                var newCellText = document.createTextNode(items[currentL][currentI][0]);
+                var newCell2 = document.createElement("td");
+                var newCellText2 = document.createTextNode(items[currentL][currentI][1]);
+    
+                var newCell3 = document.createElement("td");
+                var newCellImage = document.createElement("img");
+    
+                newCellImage.src = "/static/plus.jpeg";
+                newCellImage.classList.add('table-image');
+                newCellImage.onclick = function(){
+                    sendUpdateRequest(headerCommands[currentL], [items[currentL][currentI][0], items[currentL][currentI][1], "button"]);
+                };
+    
+                newCell.appendChild(newCellText);
+                newCell2.appendChild(newCellText2);
+                newCell3.appendChild(newCellImage);
+    
+                newLine.appendChild(newCell);
+                newLine.appendChild(newCell2);
+                newLine.appendChild(newCell3);
+                newLine.classList.add('element');
+    
+                tableBody.appendChild(newLine);
+            //ToFix: itemlist doesn't need to be present in every single iteration. It can either be stored 
+            //outside of the scope of the function or somewhere else I'll figure it out later.
+            })(itemList, i, l, headerCommands);
         }
 
         body.appendChild(tableBody);

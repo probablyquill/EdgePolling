@@ -73,7 +73,10 @@ def run_flask():
 
             #Remove json formated as string(edgeID)
             if ("remove_from_blacklist" in incoming_data.keys()):
-                data_handler.remove_from_blacklist(incoming_data["remove_from_blacklist"])
+                data_to_use = incoming_data["remove_from_blacklist"]
+                if (len(data_to_use) > 1):
+                    data_to_use = data_to_use[1]
+                data_handler.remove_from_blacklist(data_to_use)
 
             #Add json formated as list [name, edgeID, type]
             if ("add_to_blacklist" in incoming_data.keys()):
