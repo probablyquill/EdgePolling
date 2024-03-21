@@ -169,9 +169,11 @@ function createTable(offline, errors, blacklist, emails) {
     var labelOne = document.createElement("th");
     var labelOneText = document.createTextNode("Emails:");
     var tableHeader = document.createElement("thead");    
+    var blankSpace = document.createElement("th");
 
     labelOne.appendChild(labelOneText);
     newRow.appendChild(labelOne);
+    newRow.appendChild(blankSpace);
 
     tableHeader.appendChild(newRow);
     body.appendChild(tableHeader);
@@ -179,17 +181,30 @@ function createTable(offline, errors, blacklist, emails) {
     var tableBody = document.createElement("tbody");
 
     for (var i = 0; i < emails.length; i++) {
-        var newLine = document.createElement("tr");
-        var newCell = document.createElement("td");
-        var newCellText = document.createTextNode(emails[i]);
+        (function(savedI, savedEmails) {
+            console.log(savedEmails[0]);
+            var newLine = document.createElement("tr");
+            var newCell = document.createElement("td");
+            var newCellText = document.createTextNode(savedEmails[savedI]);
+            var newCell2 = document.createElement("td");
+            var newCellImage = document.createElement("img");
+            newCellImage.classList.add('table-image');
+            newCellImage.src = "/static/minus.png";
+    
+            newCellImage.onclick = function() {
+                sendUpdateRequest("delete_email", savedEmails[savedI]);
+            };
 
-        newCell.appendChild(newCellText);
-        newLine.appendChild(newCell);
-
-        newLine.classList.add('element');
-        newLine.classList.add('inner');
-
-        tableBody.appendChild(newLine);
+            newCell.appendChild(newCellText);
+            newCell2.appendChild(newCellImage);
+            newLine.appendChild(newCell);
+            newLine.appendChild(newCell2);
+    
+            newLine.classList.add('element');
+            newLine.classList.add('inner');
+    
+            tableBody.appendChild(newLine);
+        })(i, emails);
     }
 
     body.appendChild(tableBody);
