@@ -82,6 +82,7 @@ function deleteEmail() {
 }
 
 //This is horrible and I hate it and I'm sorry I wrote it but it works
+//This is definitely some kind of crime somewhere.
 function createTable(offline, errors, blacklist, emails) {
 
     var body = document.getElementById("data-table");
@@ -139,9 +140,11 @@ function createTable(offline, errors, blacklist, emails) {
                 if (currentL != 2 && items[currentL][currentI][0] != "None") {
                     newCellImage.src = "/static/plus.png";
                     newCell3.appendChild(newCellImage);
+                    newCell3.classList.add("table-item");
                 } else if (items[currentL][currentI][0] != "None") {
                     newCellImage.src = "/static/minus.png";
                     newCell3.appendChild(newCellImage);
+                    newCell3.classList.add("table-item");
                 }
     
                 newLine.appendChild(newCell);
@@ -187,9 +190,11 @@ function createTable(offline, errors, blacklist, emails) {
             var newCell = document.createElement("td");
             var newCellText = document.createTextNode(savedEmails[savedI]);
             var newCell2 = document.createElement("td");
+            newCell2.classList.add("table-item");
             var newCellImage = document.createElement("img");
             newCellImage.classList.add('table-image');
             newCellImage.src = "/static/minus.png";
+
     
             newCellImage.onclick = function() {
                 sendUpdateRequest("delete_email", savedEmails[savedI]);

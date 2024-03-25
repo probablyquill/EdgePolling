@@ -18,7 +18,10 @@
   }
 
   .table-image {
-    display: block;
     width: 2em;
     height: 2em;
+  }
+
+  .table-item {
+    text-align: right;
   }
