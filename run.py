@@ -39,8 +39,7 @@ def run_flask():
     def get_data():
         #Retrieve Errors, Offline, and Blacklist for the User interface.
         data_handler.connect_to_database()
-        errors = data_handler.get_errors()
-        offline = data_handler.get_offline()
+        offline, errors = data_handler.retrieve_for_alarming()
         blacklist = data_handler.get_blacklist_web()
         emails = data_handler.get_emails()
         data_handler.close_connection()

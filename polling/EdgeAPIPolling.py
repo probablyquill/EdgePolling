@@ -17,6 +17,7 @@ class EdgeAPIPolling():
         #io_list is a list of all inputs and outputs currently seen in the Edge API.
         self.io_list = []
 
+
         #offline_list is a bit more complicated as Edge does not throw an error when 
         #a device is offline. Given that, the program needs to track what devices are 
         #online, and then alarm when a device that was online is no longer online.

@@ -89,6 +89,7 @@ class PollingAgent():
 
         self.data_handler = DataHandler(sql_ip, sql_db, sql_user, sql_pw)
         self.alerting = AlertManager()
+        self.blacklist = []
 
     def alert_manager(self):
         self.data_handler.connect_to_database()
@@ -96,7 +97,7 @@ class PollingAgent():
         recipients = self.data_handler.get_emails()
         self.data_handler.close_connection()
 
-        alarms = self.alerting.check_alarms(offline, erroring)
+        alarms = self.alerting.check_alarms(offline, erroring, self.blacklist)
 
         if ((alarms != None) and (len(recipients) != 0)):
             #login, key, smtp, smpt port, recipients, subject, body
@@ -104,10 +105,10 @@ class PollingAgent():
 
     def poll_apis(self):
         self.data_handler.connect_to_database()
-        blacklist = self.data_handler.get_blacklist()
+        self.blacklist = self.data_handler.get_blacklist()
 
         edgeAgent = EdgeAPIPolling(self.edge_usr, self.edge_pw, self.edge_url)
-        edgeAgent.set_blacklist(blacklist)
+        edgeAgent.set_blacklist(self.blacklist)
         appliance, io_list = edgeAgent.pull_info()
 
         #Manage SQL data using the DataHandler class
