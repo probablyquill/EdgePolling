@@ -3,13 +3,16 @@ class AlertManager():
         self.alarm_ids = []
         self.current_alarming = {}
 
-    def parse_for_alarms(self, alarm_list):
+    def parse_for_alarms(self, alarm_list, blacklist):
         body_text = ""
         for item in alarm_list:
             #Unpacking the tupple into usable variables
             #This program operates under the assumption that the edgeID is the first
             #value stored in the database.
-            edgeid, *temp = item
+            name, edgeid = item
+
+            if (edgeid in blacklist): continue
+
             if (edgeid not in self.alarm_ids): self.alarm_ids.append(edgeid)
 
             if (edgeid in self.current_alarming):
@@ -22,18 +25,18 @@ class AlertManager():
                 #the alarm is detected.
                 if ticks == 12 or ticks == 24:
                     if (body_text == ""): body_text = "Offline Device(s):"
-                    body_text = body_text + "\n" + str(item[1])
+                    body_text = body_text + "\n" + str(name)
             
             else:
                 self.current_alarming[edgeid] = 0
             
         return body_text
 
-    def check_alarms(self, offline, erroring):
+    def check_alarms(self, offline, erroring, blacklist):
         body_text = ""
 
-        if (len(offline) != 0): body_text = body_text + self.parse_for_alarms(offline)
-        if (len(erroring) != 0): body_text = body_text + self.parse_for_alarms(erroring)
+        if (len(offline) != 0): body_text = body_text + self.parse_for_alarms(offline, blacklist)
+        if (len(erroring) != 0): body_text = body_text + self.parse_for_alarms(erroring, blacklist)
 
         poplist = []
 
