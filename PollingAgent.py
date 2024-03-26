@@ -41,7 +41,7 @@ def confirm_config():
             if (email_key == "" or email_key == "api key goes here"):
                 print("Error: The smtp key is missing or unconfigured.")
                 pass_flag = False
-            if (smtp_url == "" or smtp_url == "smtp.server.som"):
+            if (smtp_url == "" or smtp_url == "smtp.server.com"):
                 print("Error: The smtp url is missing or unconfigured.")
                 pass_flag = False
             if (smtp_port == ""):
@@ -98,7 +98,7 @@ class PollingAgent():
 
         alarms = self.alerting.check_alarms(offline, erroring)
 
-        if (alarms != None):
+        if ((alarms != None) and (len(recipients) != 0)):
             #login, key, smtp, smpt port, recipients, subject, body
             MailHandler.send_email(self.email_sender, self.email_key, self.smtp_url, self.smtp_port, recipients, "Edge Device Alarms:\n", alarms)
 
@@ -108,17 +108,16 @@ class PollingAgent():
 
         edgeAgent = EdgeAPIPolling(self.edge_usr, self.edge_pw, self.edge_url)
         edgeAgent.set_blacklist(blacklist)
-        offline, io_list, errors = edgeAgent.pull_info()
+        appliance, io_list = edgeAgent.pull_info()
 
         #Manage SQL data using the DataHandler class
-        self.data_handler.update_offline(offline)
-        self.data_handler.update_fields(io_list)
-        self.data_handler.update_errors(errors)
+        self.data_handler.update_appliances(appliance)
+        self.data_handler.update_io(io_list)
         self.data_handler.close_connection()
 
 if __name__ == "__main__":
     print("Running")
-    confirm_config()
+    assert confirm_config()
 
     agent = PollingAgent()
 

@@ -17,13 +17,10 @@ class EdgeAPIPolling():
         #io_list is a list of all inputs and outputs currently seen in the Edge API.
         self.io_list = []
 
-        #error_list is a list of all Edge outputs that are reporting back an error.
-        self.error_list = []
-
         #offline_list is a bit more complicated as Edge does not throw an error when 
         #a device is offline. Given that, the program needs to track what devices are 
         #online, and then alarm when a device that was online is no longer online.
-        self.offline_list = []
+        self.appliance_list = []
 
         self.blacklist = []
 
@@ -66,7 +63,7 @@ class EdgeAPIPolling():
                     "status":item['health']['state'],
                     "msg":item['health']['title'],
                     "id":item['id'],
-                    "inout": 0,
+                    "type":"input",
                     "time":now
                 }
                 #print(item['name'] + " | " + item['health']['state'] + " | " + item['health']['title'])
@@ -85,7 +82,7 @@ class EdgeAPIPolling():
                     "status":output['health']['state'],
                     "msg":output['health']['title'],
                     "id":output['id'],
-                    "inout":1,
+                    "type":"output",
                     "time":now
                 }
                 #print(output['name'] + " | " + output['health']['state'] + " | " + output['health']['title'])
@@ -96,22 +93,21 @@ class EdgeAPIPolling():
             appliances = json.loads(appliances)
             appliances = appliances["items"]
 
-            self.offline_list = []
+            self.appliance_list = []
 
             for item in appliances:
-                status = item["health"]["state"]
+                appliance_info = {
+                    "id":item["id"],
+                    "name":item["name"],
+                    "status":item["health"]["state"],
+                    "msg":item["health"]["title"],
+                    "type":"appliance",
+                    "time":now
+                }
 
-                if (status != "connected" and item['id'] not in self.blacklist):
-                    self.offline_list.append(item)
-                #Have to compare by value, not by reference. Cannot use "and item not in blacklist".
+                self.appliance_list.append(appliance_info)
 
             #Log out
             r = s.post(url = self.edge_url + "api/logout/", json = key)
 
-            #parse for errors
-            for item in self.io_list:
-                #allOk is the default "good" status response. Anything else has some form of alarm or error.
-                if ("alarm" in str(item['status']).lower() and (item['id'] not in self.blacklist)):
-                    self.error_list.append(item)
-
-            return (self.offline_list, self.io_list, self.error_list)
+            return (self.appliance_list, self.io_list)
