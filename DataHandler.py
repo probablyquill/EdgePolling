@@ -11,11 +11,14 @@ class DataHandler():
         self.sql_cnx = None
         self.sql_cur = None
 
-    #Creates all needed table if they don't already exist and establishes the sql connection and cursor.
+    #Creates all needed tables if they don't already exist and establishes the sql connection and cursor.
     def connect_to_database(self):
         self.sql_cnx = mysql.connector.connect(user=self.user, password=self.password, host=self.location, database=self.database)
         self.sql_cur = self.sql_cnx.cursor()
-
+        # edgeID  name  status  msg   state  type       blacklist        time
+        # text    text  text    text  text   input      1 = blacklisted  int
+        #                                    output     0 = allowed
+        #                                    appliance
         self.sql_cur.execute("CREATE TABLE IF NOT EXISTS edge(edgeID TEXT NOT NULL, name TEXT, status TEXT, msg TEXT, state TEXT, type TEXT, blacklist INT DEFAULT 0, time INT, UNIQUE(edgeID(36)));")
         self.sql_cur.execute("CREATE TABLE IF NOT EXISTS emails(address TEXT);")
 
