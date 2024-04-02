@@ -6,12 +6,13 @@ import time
 import json
 
 #This should only be executed in a child process.
-def start_agent():
+def start_agent(run_counter):
     agent = PollingAgent()
 
     while True:
         agent.poll_apis()
         agent.alert_manager()
+        run_counter += 1
         time.sleep(10)
 
 #Start the flask server.
@@ -104,10 +105,23 @@ def run_flask():
 #Required for multiprocessing to start correctly.
 if __name__ == "__main__":
     if (confirm_config()):
+        run_counter = 0
         multiprocessing.set_start_method("spawn")
-        p = multiprocessing.Process(target=start_agent)
+        p = multiprocessing.Process(target=start_agent, args=(run_counter,))
         
-        #IF THIS IS COMMENTED OUT THEN THE EDGE POLLING AND ALARMING WILL NOT HAPPEN
         p.start()
 
-        run_flask()
+        flask_p = multiprocessing.Process(target=run_flask)
+
+        flask_p.start()
+
+        #Kinda untested but in theory this should mean that if the
+        #monitoring doesn't run in the last minute, it restarts the monitoring process.
+        while True:
+            time.sleep(60)
+
+            if (run_counter < 1):
+                p.terminate()
+                p.start()
+
+            run_counter = 0
