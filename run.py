@@ -13,7 +13,7 @@ def start_agent(run_counter):
     while True:
         agent.poll_apis()
         agent.alert_manager()
-        run_counter += 1
+        run_counter.value += 1
         time.sleep(10)
 
 #Start the flask server.
@@ -105,9 +105,10 @@ def run_flask():
 
 #Required for multiprocessing to start correctly.
 if __name__ == "__main__":
+    multiprocessing.set_start_method("spawn")
+
     if (confirm_config()):
-        run_counter = 0
-        multiprocessing.set_start_method("spawn")
+        run_counter = multiprocessing.Value('i', 0)
         p = multiprocessing.Process(target=start_agent, args=(run_counter,))
         
         p.start()
@@ -119,10 +120,13 @@ if __name__ == "__main__":
         #Kinda untested but in theory this should mean that if the
         #monitoring doesn't run in the last minute, it restarts the monitoring process.
         while True:
-            time.sleep(60)
+            time.sleep(10)
+            if (run_counter.value < 1):
+                p.join()
 
-            if (run_counter < 1):
-                p.terminate()
+                p = multiprocessing.Process(target=start_agent, args=(run_counter,))
+
                 p.start()
+                print("Process stopped. Most likely due to an unhandled exception.")
 
-            run_counter = 0
+            run_counter.value = 0
