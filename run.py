@@ -4,6 +4,7 @@ from DataHandler import DataHandler
 from PollingAgent import PollingAgent, confirm_config
 import time
 import json
+from gevent.pywsgi import WSGIServer
 
 #This should only be executed in a child process.
 def start_agent(run_counter):
@@ -100,7 +101,9 @@ def run_flask():
             return resp
 
     #Having debug enabled results in some funny issues such as print statments and emails double sending.
-    app.run(debug=False, host=flask_ip, port=flask_port)
+    #app.run(debug=False, host=flask_ip, port=flask_port)
+    gevent_server = WSGIServer((flask_ip, flask_port), app)
+    gevent_server.serve_forever()
 
 #Required for multiprocessing to start correctly.
 if __name__ == "__main__":
