@@ -4,7 +4,7 @@ from DataHandler import DataHandler
 from PollingAgent import PollingAgent, confirm_config
 import time
 import json
-from gevent.pywsgi import WSGIServer
+from waitress import serve
 
 #This should only be executed in a child process.
 def start_agent(run_counter):
@@ -71,7 +71,6 @@ def run_flask():
     def send_data():
         if request.method == "POST":
             incoming_data = request.get_json()
-            print(incoming_data)
 
             data_handler.connect_to_database()
 
@@ -102,8 +101,7 @@ def run_flask():
 
     #Having debug enabled results in some funny issues such as print statments and emails double sending.
     #app.run(debug=False, host=flask_ip, port=flask_port)
-    gevent_server = WSGIServer((flask_ip, flask_port), app)
-    gevent_server.serve_forever()
+    serve(app, host=flask_ip, port=flask_port)
 
 #Required for multiprocessing to start correctly.
 if __name__ == "__main__":
