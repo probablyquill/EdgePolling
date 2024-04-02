@@ -25,6 +25,9 @@ def run_flask():
         sql_user = config_file["sql_user"]
         sql_pw = config_file["sql_pw"]
 
+        flask_port = config_file["flask_port"]
+        flask_ip = config_file["flask_ip"]
+
     #Create datahandler object for SQL queries
     data_handler = DataHandler(sql_ip, sql_db, sql_user, sql_pw)
 
@@ -96,7 +99,7 @@ def run_flask():
             return resp
 
     #Having debug enabled results in some funny issues such as print statments and emails double sending.
-    app.run(debug=False)
+    app.run(debug=False, host=flask_ip, port=flask_port)
 
 #Required for multiprocessing to start correctly.
 if __name__ == "__main__":
