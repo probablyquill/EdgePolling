@@ -100,16 +100,20 @@ class DataHandler():
 
     #edgeID TEXT NOT NULL, name TEXT, status TEXT, msg TEXT, state TEXT, type TEXT, blacklist INT, time INT,
     #INSERT INTO table () VALUES () ON DUPLICATE KEY UPDATE parameter="example", p2=0
-    def update_appliances(self, appliances):
-        for appliance in appliances:
-            self.sql_cur.execute("INSERT INTO edge(edgeID, name, status, msg, type, time) VALUES(%s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE name=%s, status=%s, msg=%s, time=%s", 
-                                 (appliance["id"], appliance["name"], appliance["status"], appliance["msg"], appliance["type"], appliance["time"], appliance["name"], appliance["status"], appliance["msg"], appliance["time"]))
-            
-        self.sql_cnx.commit()
 
-    def update_io(self, io_list):
+    def update_table(self, io_list):
         for item in io_list:
             self.sql_cur.execute("INSERT INTO edge(edgeID, name, status, msg, type, time) VALUES(%s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE name=%s, status=%s, msg=%s, time=%s", 
                                  (item["id"], item["name"], item["status"], item["msg"], item["type"], item["time"], item["name"], item["status"], item["msg"], item["time"]))
             
+        self.sql_cnx.commit()
+    
+    def get_edgeIDs(self):
+        self.sql_cur.execute("SELECT edgeID from edge")
+        ids = self.sql_cur.fetchall()
+
+        return ids
+    
+    def delete_edgeID(self, edgeID):
+        self.sql_cur.execute("DELETE from edge WHERE edgeID=%s", (edgeID,))
         self.sql_cnx.commit()

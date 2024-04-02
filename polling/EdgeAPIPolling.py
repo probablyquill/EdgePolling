@@ -111,4 +111,4 @@ class EdgeAPIPolling():
             #Log out
             r = s.post(url = self.edge_url + "api/logout/", json = key)
 
-            return (self.appliance_list, self.io_list)
+            return (self.appliance_list + self.io_list)

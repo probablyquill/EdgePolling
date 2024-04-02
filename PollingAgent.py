@@ -106,14 +106,28 @@ class PollingAgent():
     def poll_apis(self):
         self.data_handler.connect_to_database()
         self.blacklist = self.data_handler.get_blacklist()
+        existing_ids = self.data_handler.get_edgeIDs()
 
         edgeAgent = EdgeAPIPolling(self.edge_usr, self.edge_pw, self.edge_url)
         edgeAgent.set_blacklist(self.blacklist)
-        appliance, io_list = edgeAgent.pull_info()
+        full_list = edgeAgent.pull_info()
+
+        temp_ids = []
+
+        #Get list of found edgeIDs
+        for item in full_list:
+            temp_ids.append(item["id"])
+        
+        #Check for removed edgeIDs
+        for id in existing_ids:
+
+            #Unpack tuple
+            id = id[0]
+            if id not in temp_ids:
+                self.data_handler.delete_edgeID(id)
 
         #Manage SQL data using the DataHandler class
-        self.data_handler.update_appliances(appliance)
-        self.data_handler.update_io(io_list)
+        self.data_handler.update_table(full_list)
         self.data_handler.close_connection()
 
 if __name__ == "__main__":
