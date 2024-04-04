@@ -1,9 +1,10 @@
 import smtplib
 from email.mime.text import MIMEText
+import datetime
 
 def send_email(sender, key, smtp_url, smtp_port, recipients, subject, body):
-
-    msg = MIMEText(body)
+    now = datetime.datetime.now()
+    msg = MIMEText(f"{body} at {now.hour}:{now.minute}:{now.second}")
     msg['Subject'] = subject
     msg['From'] = sender
     if len(recipients) > 1:
