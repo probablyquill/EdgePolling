@@ -1,5 +1,8 @@
 *.pyc
 config.json
 
+#Temp Flask server for testing TODO: Remove
+server.py
+
 #MacOS Debuff lmao
 .DS_Store

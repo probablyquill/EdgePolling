@@ -25,7 +25,7 @@ def confirm_config():
             sql_user = config_file["sql_user"]
             sql_pw = config_file["sql_pw"]
 
-            #Check to ensure that required config data is not empty or using the placeholder values.
+            # Check to ensure that required config data is not empty or using the placeholder values.
             if (edge_em == "" or edge_em == "thisis@myedgelogin.com"):
                 print("Error: The edge user is missing or unconfigured.")
                 pass_flag = False
@@ -64,9 +64,9 @@ def confirm_config():
 class PollingAgent():
     def __init__(self):
 
-        #Load configuration information from file.
-        #Switched from enum class to json so that the config file could be
-        #more easily modified by the program if changes need to be made.
+        # Load configuration information from file.
+        # Switched from enum class to json so that the config file could be
+        # more easily modified by the program if changes need to be made.
         with open("config.json") as f:
             config_file = json.load(f)
 
@@ -79,8 +79,8 @@ class PollingAgent():
 
             self.smtp_url = config_file["smtp_url"]
             self.smtp_port = config_file["smtp_port"]
-            #I'm not 100% sure how I want to structure it at the moment, however 
-            #I think I'm going to change the email list to be in the sql db for easier modification.
+            # I'm not 100% sure how I want to structure it at the moment, however 
+            # I think I'm going to change the email list to be in the sql db for easier modification.
 
             sql_ip = config_file["sql_ip"]
             sql_db = config_file["sql_db"]
@@ -100,7 +100,7 @@ class PollingAgent():
         alarms = self.alerting.check_alarms(offline, erroring, self.blacklist)
 
         if ((alarms != None) and (len(recipients) != 0)):
-            #login, key, smtp, smpt port, recipients, subject, body
+            # login, key, smtp, smpt port, recipients, subject, body
             MailHandler.send_email(self.email_sender, self.email_key, self.smtp_url, self.smtp_port, recipients, "Edge Device Alarms:\n", alarms)
 
     def poll_apis(self):
@@ -114,19 +114,19 @@ class PollingAgent():
 
         temp_ids = []
 
-        #Get list of found edgeIDs
+        # Get list of found edgeIDs
         for item in full_list:
             temp_ids.append(item["id"])
         
-        #Check for removed edgeIDs
+        # Check for removed edgeIDs
         for id in existing_ids:
 
-            #Unpack tuple
+            # Unpack tuple
             id = id[0]
             if id not in temp_ids:
                 self.data_handler.delete_edgeID(id)
 
-        #Manage SQL data using the DataHandler class
+        # Manage SQL data using the DataHandler class
         self.data_handler.update_table(full_list)
         self.data_handler.close_connection()
 

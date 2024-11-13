@@ -22,6 +22,11 @@ class DataHandler():
         self.sql_cur.execute("CREATE TABLE IF NOT EXISTS edge(edgeID TEXT NOT NULL, name TEXT, status TEXT, msg TEXT, state TEXT, type TEXT, blacklist INT DEFAULT 0, time INT, UNIQUE(edgeID(36)));")
         self.sql_cur.execute("CREATE TABLE IF NOT EXISTS emails(address TEXT);")
 
+        # channel   type            message     date    time
+        # text      1 = No audio    text        text    text
+        #           0 = No video
+        self.sql_cur.execute("CREATE TABLE IF NOT EXISTS cinegy(channel TEXT NOT NULL, type INT, message TEXT, date TEXT, time TEXT)")
+
     #Closes the sql connection by clearing both the connection and the cursor.
     def close_connection(self):
         if self.sql_cur != None: self.sql_cnx.close()
@@ -116,4 +121,12 @@ class DataHandler():
     
     def delete_edgeID(self, edgeID):
         self.sql_cur.execute("DELETE from edge WHERE edgeID=%s", (edgeID,))
+        self.sql_cnx.commit()
+
+    def remove_cinegy_alert(self, channel):
+        self.sql_cur.execute("DELETE FROM cinegy WHERE channel=%s", (channel,))
+        self.sql_cnx.commit()
+
+    def add_cinegy_alert(self, channel, mtype, message, date, time):
+        self.sql_cur.execute("INSERT INTO cinegy VALUES(%s, %s, %s, %s, %s)", (channel, mtype, message, time, date))
         self.sql_cnx.commit()
