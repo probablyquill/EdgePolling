@@ -53,8 +53,8 @@ def run_flask():
 
             # Parse alert
             if "channel" in child.attrib: channel = child.attrib["channel"]
-            if "type" in child.attrib: mtype = child.attrib["type"]
-            if "message" in child.attrib: message = child.attrib["message"]
+            if "type" in child.attrib: mtype = int(child.attrib["type"])
+            if "message" in child.attrib: message = child.attrib["messsage"]
             if "date" in child.attrib: date = child.attrib["date"]
             if "time" in child.attrib: time = child.attrib["time"]
 
