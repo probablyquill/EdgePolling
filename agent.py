@@ -1,5 +1,5 @@
 from polling.edge_polling import EdgeAPIPolling
-from data_handler import DataHandler
+from db import DataHandler
 from polling.alert_manager import AlertManager
 import polling.mail_handler as mail_handler
 from config import check_config

@@ -16,6 +16,9 @@ def start_agent(run_counter):
         time.sleep(10)
 
 # Required for multiprocessing to start correctly.
+# At some point this should be modified so that the config file is only polled from one location (this 
+# file.) The info can then be passed as needed to the other methods and classes that require it without
+# repeat polling of the data.
 if __name__ == "__main__":
     if (not check_config()): 
         print("Config file check failed.")
