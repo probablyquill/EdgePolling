@@ -45,11 +45,14 @@ function addBlacklist(name, value) {
         }
     }
 }
-function addEmail(address) {
-    var addressElement = address
-
-    if (addressElement != "" && addressElement != null) {
-        sendUpdateRequest("add_email", addressElement);
+function addEmail() {
+    var addressElement = document.getElementById("email-address");
+    if (addressElement.value != "" && addressElement.value != null) {
+        sendUpdateRequest("add_email", addressElement.value);
+        addressElement.value = "";
+        if (addressElement != "" && addressElement != null) {
+            sendUpdateRequest("add_email", addressElement);
+        }
     }
 }
 
@@ -58,7 +61,6 @@ function deleteEmail(address) {
 
     if (addressElement != "" && addressElement != null) {
         sendUpdateRequest("delete_email", addressElement);
-        addressElement.value = "";
     }
 }
 
