@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-from DataHandler import DataHandler
+from db import DataHandler
 from waitress import serve
 
 import json
@@ -34,7 +34,6 @@ def run_flask():
         
         for child in root:
             if (child.tag != "event"): continue
-            print(child.attrib)
 
             channel, message, date, time = "", "", "", ""
             mtype = 9999 # 0 is missing Audio, 1 is Missing Video. Sends a larger number when clearing the alert.
@@ -55,7 +54,7 @@ def run_flask():
             data_handler.close_connection()
         
         return "Success", 200
-
+        
     @app.route("/get_data")
     def get_data():
         # Retrieve Errors, Offline, and Blacklist for the User interface.
@@ -65,22 +64,9 @@ def run_flask():
         emails = data_handler.get_emails()
         data_handler.close_connection()
 
-        # Use append versus using '= ["None,"]' as the later messes up the object.
-        templist = [errors, offline, blacklist]
-        for item in templist:
-            if (len(item) == 0): item.append(["None", "None"])
-
-        if (len(emails) == 0): emails.append("None")
-
-        # Create data object which will be sent to the server.
-        data = {
-            "errors":errors,
-            "offline":offline,
-            "blacklist":blacklist,
-            "emails":emails
-        }
-        
-        return jsonify(data), 200
+        #Flask Template will be passed errors, offline, blacklist, emails
+        #return jsonify(data), 200
+        return render_template("table.html", errors=errors, offline=offline, blacklist=blacklist, emails=emails)
     
     # Honestly this should probably return a pre-rendered flask template instead of
     # having it be generated client side with JS but whatever.
@@ -88,14 +74,10 @@ def run_flask():
     def send_data():
         if request.method == "POST":
             incoming_data = request.get_json()
-
             data_handler.connect_to_database()
-
             # Remove json formated as string(edgeID)
             if ("remove_from_blacklist" in incoming_data.keys()):
                 data_to_use = incoming_data["remove_from_blacklist"]
-                if (len(data_to_use) > 1):
-                    data_to_use = data_to_use[1]
                 data_handler.remove_from_blacklist(data_to_use)
 
             # Add json formated as list [name, edgeID, type]
