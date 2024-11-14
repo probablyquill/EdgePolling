@@ -1,7 +1,0 @@
-Website Requirements:
-
-1.) Manage Blacklist
-2.) Manage Email alerts
-    -> Add email list to MySQL database
-    -> Restrict access so that data is not publicly available.
-    -> Public user should only be able to see Fields, Offline, and Errors

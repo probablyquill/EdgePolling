@@ -22,14 +22,16 @@ Configure the config_examples.json file to have all necessary information and AP
 To test the that the Polling can sucessfully reach the Edge installation and write to the SQL database, run the following command.
 
 ```bash
-python3 PollingAgent.py
+python3 CheckConfig.py
 ```
 
-If the PollingAgent can run sucessfully, then you can launch the program using the following command.
+If the config is found to be valid, then you can launch the program using the following command.
 
 ```bash
 python3 run.py
 ```
+
+Please note that the config check only validates that information has been entered, if incorrect settings are given it will cause other problems in the program.
 
 ## License
 All code is provided as-is and is licensed under the [MIT](https://choosealicense.com/licenses/mit/) license.
