@@ -11,7 +11,7 @@ Use the package manager to install all python dependencies.
 pip3 install -r requirements.txt -y
 ```
 
-This system also requires a MySQL installation, with an existing database. User permissions can be configured as needed.
+This system also requires a MySQL installation, with an existing database. User permissions can be configured as needed and necessary tables will be automatically created inside whatever database the program is pointed at. If MySQL is used for other applications in your environment I would strongly recommend giving this application its own dedicated databse.
 
 The config_example.json file has an example configuration file which must be updated to suit your installation.
 
@@ -19,11 +19,16 @@ The config_example.json file has an example configuration file which must be upd
 
 Configure the config_examples.json file to have all necessary information and API keys, then rename it to config.json.
 
-To test the that the Polling can sucessfully reach the Edge installation and write to the SQL database, run the following command.
+To ensure that all values are present and that the config file can be found, run the following command.
 
 ```bash
-python3 CheckConfig.py
+python3 config.py
 ```
+
+To test the that the Agent can sucessfully reach the Edge installation and write to the SQL database, run the following command.
+```bash
+python3 agent.py
+``` 
 
 If the config is found to be valid, then you can launch the program using the following command.
 

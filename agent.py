@@ -77,7 +77,6 @@ if __name__ == "__main__":
     if check_config():
         agent = PollingAgent()
 
-        while True:
-            agent.poll_apis()
-            agent.alert_manager()
-            time.sleep(10)
+        agent.poll_apis()
+        agent.alert_manager()
+        time.sleep(10)
