@@ -5,6 +5,9 @@ from logging.handlers import RotatingFileHandler
 # or if a module is being run on its own.
 file_name = "default"
 
+# log = logging.getLogger(__name__)
+# log.setLevel(logging.INFO)
+
 def init(file_name):
     file_name = file_name
     logging.basicConfig(

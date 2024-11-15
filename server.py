@@ -4,9 +4,15 @@ from waitress import serve
 
 import json
 import xml.etree.ElementTree as ET
+import logging, logger
 
 # Start the flask server.
 def run_flask():
+    logger.init("server")
+
+    log = logging.getLogger(__name__)
+    log.setLevel(logging.INFO)
+
     # Load config info for SQL DB
     with open("config.json") as f:
         config_file = json.load(f)
@@ -19,6 +25,8 @@ def run_flask():
         flask_port = config_file["flask_port"]
         flask_ip = config_file["flask_ip"]
 
+    log.info("Loaded server configs.")
+
     # Create datahandler object for SQL queries
     data_handler = DataHandler(sql_ip, sql_db, sql_user, sql_pw)
 
@@ -27,10 +35,12 @@ def run_flask():
 
     @app.route("/", methods=['GET', 'POST'])
     def hello_world():
+        log.info(f"{request.method} | {request.full_path}")
         if (request.method == 'GET'): return render_template("main.html") 
         if (request.method != 'POST'): return "Unsupported", 501
 
         root = ET.fromstring(request.data.decode('utf-8'))
+        log.info(f"Recieved: {root}")
         
         for child in root:
             if (child.tag != "event"): continue
@@ -57,6 +67,7 @@ def run_flask():
         
     @app.route("/get_data")
     def get_data():
+        log.info(f"{request.method} | {request.full_path}")
         # Retrieve Errors, Offline, and Blacklist for the User interface.
         data_handler.connect_to_database()
         offline, errors = data_handler.retrieve_for_alarming()
@@ -74,6 +85,7 @@ def run_flask():
     def send_data():
         if request.method == "POST":
             incoming_data = request.get_json()
+            log.info(f"{request.method} | {request.full_path} | {incoming_data}")
             data_handler.connect_to_database()
             # Remove json formated as string(edgeID)
             if ("remove_from_blacklist" in incoming_data.keys()):

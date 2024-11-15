@@ -72,13 +72,13 @@ class DataHandler():
     def update_blacklist(self, name, edgeID, type):
         self.sql_cur.execute("UPDATE edge SET blacklist=1 WHERE edgeID=%s", (edgeID,))
         
-        self.log.info(f"Updated blacklist with item {name}, {edgeID}.")
+        self.log.info(f"Updated blacklist with item [{name}],[{edgeID}].")
         self.sql_cnx.commit()
 
     #edgeID is a string of the edge id.
     def remove_from_blacklist(self, edgeID):
         self.sql_cur.execute("UPDATE edge SET blacklist=0 WHERE edgeID=%s", (edgeID,))
-        self.log.info(f"Removed {edgeID} from blacklist.")
+        self.log.info(f"Removed [{edgeID}] from blacklist.")
         self.sql_cnx.commit()
 
     def retrieve_for_alarming(self):
