@@ -1,6 +1,11 @@
 import json
+import logger, logging
 
 def check_config():
+    # Setup logger
+    log = logging.getLogger(__name__)
+    log.setLevel(logging.INFO)
+
     # Frankly at least some of this should be getting stored in environment variables
     # with some kind of setup script. Bare minimum edge pw and email api key shouldn't
     # be getting stored in plain text.
@@ -27,21 +32,31 @@ def check_config():
             config_file = json.load(f)
             for key in errors_and_defaults:
                 default, error = errors_and_defaults[key]
-                if (config_file[key] != default): continue
+                if (config_file[key] != default):
+                    log.info(f"Confirmed key {key}.")
+                    continue
+                
                 passFlag = False
-                print(error)
+                log.error(error)
 
     except KeyError as e:
-        print(str(e) + "\nMissing Value from Config File")
+        log.critical("KeyError: Missing values in config file.")
         passFlag = False
 
     except FileNotFoundError as e:
         print("The config file could not be found. Please refer to the README and ensure that you have a config.json file.")
+        log.critical("MISSING: Config file could not be found.")
         passFlag = False
+    if passFlag:
+        log.info("Config check succeeded.")
+    else:
+        log.info("Config check failed.")
 
     return passFlag
     
 if __name__ == "__main__":
+    logger.init("config")
+
     if check_config():
         print("Success: Config file is present and has all needed values filled out.")
     else:

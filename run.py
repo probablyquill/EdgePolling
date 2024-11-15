@@ -1,9 +1,11 @@
 from server import run_flask
 from agent import PollingAgent
 from config import check_config
+from pathlib import Path
 
 import time
 import multiprocessing
+import logger, logging
 
 # This should only be executed in a child process.
 def start_agent(run_counter):
@@ -20,9 +22,17 @@ def start_agent(run_counter):
 # file.) The info can then be passed as needed to the other methods and classes that require it without
 # repeat polling of the data.
 if __name__ == "__main__":
+    Path("./logs").mkdir(parents=True, exist_ok=True)
+    logger.init("main")
+    log = logging.getLogger(__name__)
+    log.setLevel(logging.INFO)
+    
     if (not check_config()): 
-        print("Config file check failed.")
+        print("EXITING: CONFIG CHECK FAILED")
+        log.critical("CONFIG CHECK FAILED")
         exit()
+
+    log.info("Config check succeeded.")
     
     # Multiprocessing setup. The main process starts the flask server and upkeeps the Polling Agent.
     multiprocessing.set_start_method("spawn")
@@ -30,20 +40,23 @@ if __name__ == "__main__":
     run_counter = multiprocessing.Value('i', 0)
     p = multiprocessing.Process(target=start_agent, args=(run_counter,))
     p.start()
+    log.info("Agent thread started successfully.")
 
     flask_p = multiprocessing.Process(target=run_flask)
     flask_p.start()
+    log.info("Flask server started successfully.")
 
     # Kinda untested but in theory this should mean that if the monitoring process stops or fails
     # it will automatically be joined and then restarted.
     while True:
         time.sleep(20)
         if (run_counter.value < 1):
+            log.error("Agent has hung or crashed. Restarting Agent.")
             p.join()
 
             p = multiprocessing.Process(target=start_agent, args=(run_counter,))
 
             p.start()
-            print("Polling Agent stopped due to an unhandled exception.")
+            log.info("Agent has been restarted.")
 
         run_counter.value = 0

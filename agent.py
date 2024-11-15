@@ -5,13 +5,19 @@ import polling.mail_handler as mail_handler
 from config import check_config
 import json
 import time
+import logger, logging
 
 class PollingAgent():
     def __init__(self):
+        # Create logger for agent and its imports.
+        logger.init("agent")
+        self.log = logging.getLogger(__name__)
+        self.log.setLevel(logging.INFO)
 
         # Load configuration information from file.
         # Switched from enum class to json so that the config file could be
         # more easily modified by the program if changes need to be made.
+        self.log.info("Reading configuration file.")
         with open("config.json") as f:
             config_file = json.load(f)
 
@@ -30,8 +36,15 @@ class PollingAgent():
             sql_user = config_file["sql_user"]
             sql_pw = config_file["sql_pw"]
 
+        self.log.info("Configuration data loaded successfully.")
+        self.log.info("Creating DataHandler")
         self.data_handler = DataHandler(sql_ip, sql_db, sql_user, sql_pw)
+
+        self.log.info("Creating AlertManager")
         self.alerting = AlertManager()
+
+        self.log.info("Creating EdgeAPIPolling")
+        self.edgeAgent = EdgeAPIPolling(self.edge_usr, self.edge_pw, self.edge_url)
         self.blacklist = []
 
     def alert_manager(self):
@@ -40,10 +53,17 @@ class PollingAgent():
         recipients = self.data_handler.get_emails()
         self.data_handler.close_connection()
 
+        for name, id in offline:
+            self.log.warning(f"DEVICE {name} with ID: {id} is offline.")
+
+        for name, id in erroring:
+            self.log.warning(f"DEVICE {name} with ID: {id} is erroring.")
+
         alarms = self.alerting.check_alarms(offline, erroring, self.blacklist)
 
         if ((alarms != None) and (len(recipients) != 0)):
             # login, key, smtp, smpt port, recipients, subject, body
+            self.log.info("Sending Email Alert.")
             mail_handler.send_email(self.email_sender, self.email_key, self.smtp_url, self.smtp_port, recipients, "Edge Device Alarms:\n", alarms)
 
     def poll_apis(self):
@@ -51,9 +71,8 @@ class PollingAgent():
         self.blacklist = self.data_handler.get_blacklist()
         existing_ids = self.data_handler.get_edgeIDs()
 
-        edgeAgent = EdgeAPIPolling(self.edge_usr, self.edge_pw, self.edge_url)
-        edgeAgent.set_blacklist(self.blacklist)
-        full_list = edgeAgent.pull_info()
+        self.edgeAgent.set_blacklist(self.blacklist)
+        full_list = self.edgeAgent.pull_info()
 
         temp_ids = []
 

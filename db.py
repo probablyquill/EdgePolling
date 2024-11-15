@@ -1,5 +1,6 @@
 import mysql
 import mysql.connector
+import logger, logging
 
 class DataHandler():
     def __init__(self, sql_location, sql_database, sql_usr, sql_pw):
@@ -10,6 +11,9 @@ class DataHandler():
 
         self.sql_cnx = None
         self.sql_cur = None
+        
+        self.log = logging.getLogger(__name__)
+        self.log.setLevel(logging.INFO)
 
     #Creates all needed tables if they don't already exist and establishes the sql connection and cursor.
     def connect_to_database(self):
@@ -26,11 +30,13 @@ class DataHandler():
         # text      1 = No audio    text        text    text
         #           0 = No video
         self.sql_cur.execute("CREATE TABLE IF NOT EXISTS cinegy(channel TEXT NOT NULL, type INT, message TEXT, date TEXT, time TEXT)")
+        self.log.info("Database connection successful.")
 
     #Closes the sql connection by clearing both the connection and the cursor.
     def close_connection(self):
         if self.sql_cur != None: self.sql_cnx.close()
         if self.sql_cnx != None: self.sql_cnx.close()
+        self.log.info("Database connection closed.")
 
     def get_offline(self):
         self.sql_cur.execute("SELECT name, edgeID FROM edge WHERE status=\"missing\" AND blacklist=0;")
@@ -66,11 +72,13 @@ class DataHandler():
     def update_blacklist(self, name, edgeID, type):
         self.sql_cur.execute("UPDATE edge SET blacklist=1 WHERE edgeID=%s", (edgeID,))
         
+        self.log.info(f"Updated blacklist with item {name}, {edgeID}.")
         self.sql_cnx.commit()
 
     #edgeID is a string of the edge id.
     def remove_from_blacklist(self, edgeID):
         self.sql_cur.execute("UPDATE edge SET blacklist=0 WHERE edgeID=%s", (edgeID,))
+        self.log.info(f"Removed {edgeID} from blacklist.")
         self.sql_cnx.commit()
 
     def retrieve_for_alarming(self):
@@ -99,9 +107,12 @@ class DataHandler():
         self.sql_cur.execute("INSERT INTO emails(address) VALUES (%s)", (address,))
         self.sql_cnx.commit()
 
+        self.log.info(f"Added email address {address}.")
+
     def remove_email(self, address):
         self.sql_cur.execute("DELETE FROM emails WHERE address = %s;", (address,))
         self.sql_cnx.commit()
+        self.log.info(f"Removed email address {address}.")
 
     #edgeID TEXT NOT NULL, name TEXT, status TEXT, msg TEXT, state TEXT, type TEXT, blacklist INT, time INT,
     #INSERT INTO table () VALUES () ON DUPLICATE KEY UPDATE parameter="example", p2=0
@@ -126,7 +137,9 @@ class DataHandler():
     def remove_cinegy_alert(self, channel):
         self.sql_cur.execute("DELETE FROM cinegy WHERE channel=%s", (channel,))
         self.sql_cnx.commit()
+        self.log.warning(f"CINEGY ALERT ON {channel} CLEARED")
 
     def add_cinegy_alert(self, channel, mtype, message, date, time):
         self.sql_cur.execute("INSERT INTO cinegy VALUES(%s, %s, %s, %s, %s)", (channel, mtype, message, time, date))
         self.sql_cnx.commit()
+        self.log.warning(f"CINEGY ALERT ON CHANNEL {channel}: {message}")

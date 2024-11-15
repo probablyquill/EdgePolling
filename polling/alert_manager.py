@@ -1,5 +1,10 @@
+import logging
+
 class AlertManager():
     def __init__(self):
+        self.log = logging.getLogger(__name__)
+        self.log.setLevel(logging.INFO)
+
         self.alarm_ids = []
         self.current_alarming = {}
 
@@ -47,6 +52,7 @@ class AlertManager():
         for item in poplist:
             #body_text = body_text + f"\nCleared: {item}"
             self.current_alarming.pop(item)
+            self.log.info(f"CLEARED ALERT ON {item}")
 
         #print("\nCurrent alarming: " + str(self.current_alarming))
         #print("\nAlarm IDs: " + str(self.alarm_ids))
