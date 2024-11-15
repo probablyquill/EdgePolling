@@ -54,10 +54,10 @@ class PollingAgent():
         self.data_handler.close_connection()
 
         for name, id in offline:
-            self.log.warning(f"DEVICE {name} with ID: {id} is offline.")
+            self.log.warning(f"DEVICE [{name}] with ID: [{id}] is offline.")
 
         for name, id in erroring:
-            self.log.warning(f"DEVICE {name} with ID: {id} is erroring.")
+            self.log.warning(f"DEVICE [{name}] with ID: [{id}] is erroring.")
 
         alarms = self.alerting.check_alarms(offline, erroring, self.blacklist)
 
