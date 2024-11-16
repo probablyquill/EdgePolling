@@ -14,6 +14,3 @@ def init(file_name):
     handlers=[RotatingFileHandler(f"./logs/{file_name}.log", maxBytes=100000, backupCount=10)],
     format="[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s",
     datefmt='%Y-%m-%dT%H:%M:%S')
-
-    log = logging.getLogger(__name__)
-    log.setLevel(logging.INFO)

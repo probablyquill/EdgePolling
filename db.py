@@ -15,7 +15,7 @@ class DataHandler():
         self.log = logging.getLogger(__name__)
         self.log.setLevel(logging.INFO)
 
-    #Creates all needed tables if they don't already exist and establishes the sql connection and cursor.
+    # Creates all needed tables if they don't already exist and establishes the sql connection and cursor.
     def connect_to_database(self):
         self.sql_cnx = mysql.connector.connect(user=self.user, password=self.password, host=self.location, database=self.database)
         self.sql_cur = self.sql_cnx.cursor()
@@ -32,7 +32,7 @@ class DataHandler():
         self.sql_cur.execute("CREATE TABLE IF NOT EXISTS cinegy(channel TEXT NOT NULL, type INT, message TEXT, date TEXT, time TEXT)")
         self.log.info("Database connection successful.")
 
-    #Closes the sql connection by clearing both the connection and the cursor.
+    # Closes the sql connection by clearing both the connection and the cursor.
     def close_connection(self):
         if self.sql_cur != None: self.sql_cnx.close()
         if self.sql_cnx != None: self.sql_cnx.close()
@@ -50,7 +50,7 @@ class DataHandler():
 
         return fields_list
 
-    #These can both be combined into the same item, if the logic in PollingAgent is adjusted.
+    # These can both be combined into the same item, if the logic in PollingAgent is adjusted.
     def get_blacklist_web(self):
         self.sql_cur.execute("SELECT name, edgeID from edge WHERE blacklist=1;")
         blacklist = self.sql_cur.fetchall()
@@ -64,7 +64,8 @@ class DataHandler():
         list = []
 
         for item in templist:
-            #Done this way in order to clear the tuple so that it's just a list of strings.
+            # Done this way in order to clear the tuple so that it's just a list of strings.
+            # The cursor returns items from the table as (item,).
             list.append(item[0])
 
         return list
@@ -75,7 +76,7 @@ class DataHandler():
         self.log.info(f"Updated blacklist with item [{name}],[{edgeID}].")
         self.sql_cnx.commit()
 
-    #edgeID is a string of the edge id.
+    # edgeID is a string of the edge id.
     def remove_from_blacklist(self, edgeID):
         self.sql_cur.execute("UPDATE edge SET blacklist=0 WHERE edgeID=%s", (edgeID,))
         self.log.info(f"Removed [{edgeID}] from blacklist.")
@@ -97,8 +98,8 @@ class DataHandler():
         emails = []
 
         for item in templist:
-            #Done this way in order to clear the tuple so that it's just a list of strings.
-            #Data is returned from the cursor as (email,).
+            # Done this way in order to clear the tuple so that it's just a list of strings.
+            # Data is returned from the cursor as (email,).
             emails.append(item[0])
         
         return emails
@@ -113,9 +114,6 @@ class DataHandler():
         self.sql_cur.execute("DELETE FROM emails WHERE address = %s;", (address,))
         self.sql_cnx.commit()
         self.log.info(f"Removed email address {address}.")
-
-    #edgeID TEXT NOT NULL, name TEXT, status TEXT, msg TEXT, state TEXT, type TEXT, blacklist INT, time INT,
-    #INSERT INTO table () VALUES () ON DUPLICATE KEY UPDATE parameter="example", p2=0
 
     def update_table(self, io_list):
         for item in io_list:

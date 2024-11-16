@@ -53,7 +53,7 @@ def check_config():
         log.info("Config check failed.")
 
     return passFlag
-    
+
 if __name__ == "__main__":
     logger.init("config")
 

@@ -1,6 +1,6 @@
 from polling.edge_polling import EdgeAPIPolling
 from db import DataHandler
-from polling.alert_manager import AlertManager
+import polling.alert_manager as am
 import polling.mail_handler as mail_handler
 from config import check_config
 import json
@@ -40,13 +40,13 @@ class PollingAgent():
         self.log.info("Creating DataHandler")
         self.data_handler = DataHandler(sql_ip, sql_db, sql_user, sql_pw)
 
-        self.log.info("Creating AlertManager")
-        self.alerting = AlertManager()
-
         self.log.info("Creating EdgeAPIPolling")
         self.edgeAgent = EdgeAPIPolling(self.edge_usr, self.edge_pw, self.edge_url)
         self.blacklist = []
 
+    # TODO Rework alert manager. Currently it's based off a very rough sleep based solution that takes advantage of the fact that
+    # the program pases so that it only queries every x seconds at max. A prefered solution would be to have it compare the start 
+    # of the alarm time to the present to determine whether or not it will send an alert.
     def alert_manager(self):
         self.data_handler.connect_to_database()
         offline, erroring = self.data_handler.retrieve_for_alarming()
@@ -59,7 +59,9 @@ class PollingAgent():
         for name, id in erroring:
             self.log.warning(f"DEVICE [{name}] with ID: [{id}] is erroring.")
 
-        alarms = self.alerting.check_alarms(offline, erroring, self.blacklist)
+        # The alert manager is fed the list of offline and erroring clients, compares them against the blacklist, and then returns
+        # if there are any edge devices that should presently be alarming.
+        alarms = am.check_alarms(offline, erroring, self.blacklist)
 
         if ((alarms != None) and (len(recipients) != 0)):
             # login, key, smtp, smpt port, recipients, subject, body
@@ -69,26 +71,29 @@ class PollingAgent():
     def poll_apis(self):
         self.data_handler.connect_to_database()
         self.blacklist = self.data_handler.get_blacklist()
+
+        # Retrieves list of IDs currently in the database.
         existing_ids = self.data_handler.get_edgeIDs()
-
         self.edgeAgent.set_blacklist(self.blacklist)
+        
+        # Retrieves list of devices and paths currently present in Edge.
         full_list = self.edgeAgent.pull_info()
-
         temp_ids = []
 
         # Get list of found edgeIDs
         for item in full_list:
             temp_ids.append(item["id"])
         
-        # Check for removed edgeIDs
+        # Check for removed edgeIDs. If a device is present in the database but is no longer present in edge, 
+        # then it should be removed from the database.
         for id in existing_ids:
 
-            # Unpack tuple
+            # Unpack tuple. Loads in as (id,...)
             id = id[0]
             if id not in temp_ids:
                 self.data_handler.delete_edgeID(id)
 
-        # Manage SQL data using the DataHandler class
+        # Push updates to the database then close the connection.
         self.data_handler.update_table(full_list)
         self.data_handler.close_connection()
 

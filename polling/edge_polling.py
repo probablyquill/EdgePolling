@@ -29,35 +29,35 @@ class EdgeAPIPolling():
         self.blacklist = blacklist
 
     def pull_info(self):
+        
+        # Creates two lists that contain information retrieved from the edge API. 
+        # The returned lists are a list of appliances pulled from Edge, and a list of 
+        # inputs and outputs. Both lists use dicts that contain the name, device id, status, type, and 
+        # whatever message is included. 
         with requests.Session() as s:
             r = s.post(url = self.edge_url + "api/login/", json = self.info)
 
             key = r.content.decode('utf-8')
 
             key = json.loads(key)
-            #print("SESSION INFO: ")
-            #print(json.dumps(key, indent=2))
 
             r = s.get(url = self.edge_url + "api/region/")
 
             region_info = r.content.decode('utf-8')
             region_info = json.loads(region_info)
 
-            #print("\nREGION INFO: ")
             for element in region_info["items"]:
                 region_id = element["id"]
 
                 r = s.get(url = self.edge_url + "api/region/" + region_id)
                 sub_region = r.content.decode("utf-8")
                 sub_region = json.loads(sub_region)
-                #print(json.dumps(sub_region, indent = 2))
 
             r = s.get(url = self.edge_url + "api/input/")
             inputs = r.content.decode('utf-8')
             inputs = json.loads(inputs)
             now = time.time()
 
-            #print("\nINPUTS: ")
             for item in inputs['items']:
                 temp = {
                     "name":item['name'],
@@ -67,7 +67,7 @@ class EdgeAPIPolling():
                     "type":"input",
                     "time":now
                 }
-                #print(item['name'] + " | " + item['health']['state'] + " | " + item['health']['title'])
+
                 self.io_list.append(temp)
 
             r = s.get(url = self.edge_url + "api/output/")
@@ -75,7 +75,6 @@ class EdgeAPIPolling():
             outputs = r.content.decode('utf-8')
             outputs = json.loads(outputs)
 
-            #print("\nOUTPUTS: ")
             for output in outputs["items"]:
 
                 temp = {
@@ -86,7 +85,7 @@ class EdgeAPIPolling():
                     "type":"output",
                     "time":now
                 }
-                #print(output['name'] + " | " + output['health']['state'] + " | " + output['health']['title'])
+
                 self.io_list.append(temp)
 
             r = s.get (url = self.edge_url + "api/appliance/")
