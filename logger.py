@@ -11,6 +11,6 @@ file_name = "default"
 def init(file_name):
     file_name = file_name
     logging.basicConfig(
-    handlers=[RotatingFileHandler(f"./logs/{file_name}.log", maxBytes=100000, backupCount=10)],
+    handlers=[RotatingFileHandler(f"./logs/{file_name}.log", maxBytes=10000000, backupCount=10)],
     format="[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s",
     datefmt='%Y-%m-%dT%H:%M:%S')

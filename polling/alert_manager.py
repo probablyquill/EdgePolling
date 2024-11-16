@@ -31,6 +31,7 @@ def parse_for_alarms(alarm_list, blacklist):
             if ticks == 12 or ticks == 24:
                 if (body_text == ""): body_text = "Offline Device(s):"
                 body_text = body_text + "\n" + str(name)
+                log.info(f"[{name}] FLAGGED FOR ALARM")
         
         else:
             current_alarming[edgeid] = 0
