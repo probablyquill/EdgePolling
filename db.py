@@ -30,13 +30,11 @@ class DataHandler():
         # text      1 = No audio    text        text    text
         #           0 = No video
         self.sql_cur.execute("CREATE TABLE IF NOT EXISTS cinegy(channel TEXT NOT NULL, type INT, message TEXT, date TEXT, time TEXT)")
-        self.log.info("Database connection successful.")
 
     # Closes the sql connection by clearing both the connection and the cursor.
     def close_connection(self):
         if self.sql_cur != None: self.sql_cnx.close()
         if self.sql_cnx != None: self.sql_cnx.close()
-        self.log.info("Database connection closed.")
 
     def get_offline(self):
         self.sql_cur.execute("SELECT name, edgeID FROM edge WHERE status=\"missing\" AND blacklist=0;")

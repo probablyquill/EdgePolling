@@ -46,7 +46,9 @@ def run_flask():
             if (child.tag != "event"): continue
 
             channel, message, date, time = "", "", "", ""
-            mtype = 9999 # 0 is missing Audio, 1 is Missing Video. Sends a larger number when clearing the alert.
+            # Unclear how exactly types are categorized. It appears that CLEAR messages have types in the thousands, while alert 
+            # messages appear to be sub 20. More testing will need to be done.
+            mtype = 9999 
 
             # Parse alert
             if "channel" in child.attrib: channel = child.attrib["channel"]
@@ -56,15 +58,16 @@ def run_flask():
             if "time" in child.attrib: time = child.attrib["time"]
 
             data_handler.connect_to_database()
-            # Clear alert from database. Clear messages will have a type greater than 1.
-            if mtype > 1: data_handler.remove_cinegy_alert(channel) 
+            # Clear alert from database. Error messages appear to have values under 100, while clear messages have values over 1 million.
+            if mtype > 1000: data_handler.remove_cinegy_alert(channel) 
             # Add alert to database  
             else: data_handler.add_cinegy_alert(channel, mtype, message, date, time)
             
             data_handler.close_connection()
         
         return "Success", 200
-        
+    
+    # Generates a table using the table.html template and sends it to the server.
     @app.route("/get_data")
     def get_data():
         log.info(f"{request.method} | {request.full_path}")
@@ -79,8 +82,7 @@ def run_flask():
         #return jsonify(data), 200
         return render_template("table.html", errors=errors, offline=offline, blacklist=blacklist, emails=emails)
     
-    # Honestly this should probably return a pre-rendered flask template instead of
-    # having it be generated client side with JS but whatever.
+    # Data endpoint for updates to the blacklist and email list.
     @app.route("/send_data", methods = ['POST'])
     def send_data():
         if request.method == "POST":
